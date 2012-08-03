@@ -31,7 +31,7 @@ function init(){
   for(i=0;i<50;i++){
     var x = Math.floor(Math.random() * width);
     var y = Math.floor(Math.random() * height);
-    var color = colors[Math.floor((Math.random()*4))];
+    var color = colors[Math.floor((Math.random()*colors.length))];
     var direction = Math.floor((Math.random()*8));
     var speed = Math.random() * 2;
     var vision = Math.floor((Math.random()*5)) + 10; //10 to 15
@@ -68,12 +68,12 @@ function draw(){
 
   //draws each cell
   for(i=0;i<cells.length;i++){
-    game.fillStyle = cells[i][3];
-    game.beginPath();
     if(cells[i][7] < 2000) //Ensures cells are easily visable
       var size = 2;
     else
       var size = (cells[i][7]/1000);
+    game.fillStyle = cells[i][3];
+    game.beginPath();    
     game.arc(cells[i][0], cells[i][1], size, 0, Math.PI * 2, true);
     game.closePath();
     game.fill();
@@ -99,23 +99,23 @@ function move(){
         var xDiff = cells[i][0] - food[j][0]; 
         var yDiff = cells[i][1] - food[j][1];
         var vision = cells[i][6];
-        var size = cells[i][7]/1000;
+        var catchRange = (cells[i][7]/1000) + 2;
 
         //If a cell is on top of a piece of food, the cell eats it
-        if(Math.abs(xDiff) <= size+2 && Math.abs(yDiff) <= size+2){
+        if(Math.abs(xDiff) <= catchRange && Math.abs(yDiff) <= catchRange){
           food.splice(j,1);
           cells[i][7] += 1000;
         }
                 
         //If the food is within vision of the cell, move toward the food
         if((Math.abs(xDiff) < vision) && (Math.abs(yDiff) < vision)){
-          if(xDiff > 0){
+          if(xDiff > 0 && xDiff >= catchRange){ 
             cells[i][0] -= cells[i][5];
           }
           else if(xDiff < 0){
             cells[i][0] += cells[i][5];
           }
-          if(yDiff > 0){
+          if(yDiff > 0 && yDiff >= catchRange){
             cells[i][1] -= cells[i][5];
           }
           else if(yDiff < 0){
