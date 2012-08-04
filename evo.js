@@ -18,6 +18,22 @@ var height = 600;
 var cells = [];
 var food = [];
 var colors = ['red','green','blue','yellow'];
+
+function cell(x,y,color,direction,speed,vision,energy,maxSize){
+  this.x = x;
+  this.y = y;
+  this.color = color;
+  this.direction = direction;
+  this.speed = speed;
+  this.vision = vision;
+  this.energy = energy;
+  this.maxSize = maxSize;
+}
+
+function foodParticle(X, Y){
+  this.x = X;
+  this.y = Y;
+}
  
 function init(){
   var c = document.getElementById('game');
@@ -37,7 +53,8 @@ function init(){
     var vision = Math.floor((Math.random()*5)) + 10; //10 to 15
     var energy = Math.floor((Math.random()*1000)) + 3500; //3500 to 4500
     var maxSize = Math.floor((Math.random()*1000)) + 4500; //4500 to 5500
-    cells.push([x, y, maxSize, color, direction, speed, vision, energy]);  
+
+    cells.push(new cell(x,y,color,direction,speed,vision,energy,maxSize));  
   }
   
   live(); //main loop
@@ -52,9 +69,9 @@ function live(){
 
 function feed(){ 
   if(Math.random() > .95){
-    var x = Math.floor(Math.random() * width);
-    var y = Math.floor(Math.random() * height);
-    food.push([x,y]);
+    var X = Math.floor(Math.random() * width);
+    var Y = Math.floor(Math.random() * height);
+    food.push(new foodParticle(X, Y));
   }
 }
 
@@ -68,13 +85,13 @@ function draw(){
 
   //draws each cell
   for(i=0;i<cells.length;i++){
-    if(cells[i][7] < 2000) //Ensures cells are easily visable
+    if(cells[i].energy < 2000) //Ensures cells are easily visable
       var size = 2;
     else
-      var size = (cells[i][7]/1000);
-    game.fillStyle = cells[i][3];
+      var size = (cells[i].energy/1000);
+    game.fillStyle = cells[i].color;
     game.beginPath();    
-    game.arc(cells[i][0], cells[i][1], size, 0, Math.PI * 2, true);
+    game.arc(cells[i].x, cells[i].y, size, 0, Math.PI * 2, true);
     game.closePath();
     game.fill();
   }
@@ -83,7 +100,7 @@ function draw(){
   for(i=0;i<food.length;i++){
     game.fillStyle = '#fff';
     game.beginPath();
-    game.arc(food[i][0], food[i][1], 1, 0, Math.PI * 2, true);
+    game.arc(food[i].x, food[i].y, 1, 0, Math.PI * 2, true);
     game.closePath();
     game.fill();
   }
@@ -96,30 +113,29 @@ function move(){
     //Checks to see if the cell is near any food
     if(food.length > 0 && moved == 0){
       for(j=0; j<food.length; j++){
-        var xDiff = cells[i][0] - food[j][0]; 
-        var yDiff = cells[i][1] - food[j][1];
-        var vision = cells[i][6];
-        var catchRange = (cells[i][7]/1000) + 2;
+        var xDiff = cells[i].x - food[j].x; 
+        var yDiff = cells[i].y - food[j].y;
+        var catchRange = (cells[i].energy/1000) + 2;
 
         //If a cell is on top of a piece of food, the cell eats it
         if(Math.abs(xDiff) <= catchRange && Math.abs(yDiff) <= catchRange){
           food.splice(j,1);
-          cells[i][7] += 1000;
+          cells[i].energy += 1000;
         }
                 
         //If the food is within vision of the cell, move toward the food
-        if((Math.abs(xDiff) < vision) && (Math.abs(yDiff) < vision)){
+        if((Math.abs(xDiff) < cells[i].vision) && (Math.abs(yDiff) < cells[i].vision)){
           if(xDiff > 0 && xDiff >= catchRange){ 
-            cells[i][0] -= cells[i][5];
+            cells[i].x -= cells[i].speed;
           }
           else if(xDiff < 0){
-            cells[i][0] += cells[i][5];
+            cells[i].x += cells[i].speed;
           }
           if(yDiff > 0 && yDiff >= catchRange){
-            cells[i][1] -= cells[i][5];
+            cells[i].y -= cells[i].speed;
           }
           else if(yDiff < 0){
-            cells[i][1] += cells[i][5];
+            cells[i].y += cells[i].speed;
           }
           moved = 1;
           break;
@@ -133,16 +149,16 @@ function move(){
     }
     
     //Cells lose energy each turn proportional to their speed
-    cells[i][7] -= cells[i][5];
+    cells[i].energy -= cells[i].speed;
     
     //Reproduce if they have enough energy 
-    if(cells[i][7] > cells[i][2]){
+    if(cells[i].energy > cells[i].maxSize){
       mitosis(i);
     }
     
     //When they run out of energy, they die and become food
-    if(cells[i][7] < 1){
-      food.push([cells[i][0],cells[i][1]]);
+    if(cells[i].energy < 1){
+      food.push(new foodParticle(cells[i].x, cells[i].y));
       cells.splice(i,1);
     }
   }
@@ -152,74 +168,74 @@ function wander(){
     //Randomly change direction
     if(Math.random() > .90){
       if(Math.random() > .5){
-        cells[i][4] += 1;
-        if(cells[i][4] > 7)
-          cells[i][4] = 0;
+        cells[i].direction += 1;
+        if(cells[i].direction > 7)
+          cells[i].direction = 0;
       }
       else{
-        cells[i][4] -= 1;
-        if(cells[i][4] < 0)
-          cells[i][4] = 7;
+        cells[i].direction -= 1;
+        if(cells[i].direction < 0)
+          cells[i].direction = 7;
       }
     }
     
     //Makes sure cell stays in bounds
-    if(cells[i][0] > width){
-      cells[i][4] = 0;
+    if(cells[i].x > width){
+      cells[i].direction = 0;
     }
-    if(cells[i][0] < 0){
-      cells[i][4] = 4;
+    if(cells[i].x < 0){
+      cells[i].direction = 4;
     }
-    if(cells[i][1] > height){
-      cells[i][4] = 6;
+    if(cells[i].y > height){
+      cells[i].direction = 6;
     }
-    if(cells[i][1] < 0){
-      cells[i][4] = 2;
+    if(cells[i].y < 0){
+      cells[i].direction = 2;
     }
 
     //move in one of 8 chosen directions    
-    switch(cells[i][4]){
+    switch(cells[i].direction){
       case 0:
-        cells[i][0] -= cells[i][5];
+        cells[i].x -= cells[i].speed;
         break;
       case 1:
-        cells[i][0] -= cells[i][5];
-        cells[i][1] += cells[i][5];
+        cells[i].x -= cells[i].speed;
+        cells[i].y += cells[i].speed;
         break;
       case 2:
-        cells[i][1] += cells[i][5];
+        cells[i].y += cells[i].speed;
         break;
       case 3:
-        cells[i][0] += cells[i][5];
-        cells[i][1] += cells[i][5];
+        cells[i].x += cells[i].speed;
+        cells[i].y += cells[i].speed;
         break;
       case 4:
-        cells[i][0] += cells[i][5];
+        cells[i].x += cells[i].speed;
         break;
       case 5:
-        cells[i][0] += cells[i][5];
-        cells[i][1] -= cells[i][5];
+        cells[i].x += cells[i].speed;
+        cells[i].y -= cells[i].speed;
         break;
       case 6:
-        cells[i][1] -= cells[i][5];
+        cells[i].y -= cells[i].speed;
         break;
       case 7:
-        cells[i][0] -= cells[i][5];
-        cells[i][1] -= cells[i][5];
+        cells[i].x -= cells[i].speed;
+        cells[i].y -= cells[i].speed;
         break;
     }
 }
 
 function mitosis(parent){
-  cells[parent][7] /= 2;
+  cells[parent].energy /= 2;
   
-  var x = cells[parent][0];
-  var y = cells[parent][1];
-  var color = cells[parent][3];
+  var x = cells[parent].x;
+  var y = cells[parent].y;
+  var color = cells[parent].color;
   var direction = Math.floor((Math.random()*8));
-  var speed = cells[parent][5] + (.5 - Math.random()); //mutate +/-1
-  var vision = cells[parent][6] + (2 - Math.floor((Math.random()*5))); //Mutate +/-2
-  var energy = cells[parent][7];
-  var maxSize = cells[parent][2] + (50 - Math.floor((Math.random()*100)));
-  cells.push([x, y, maxSize, color, direction, speed, vision, energy]);
+  var speed = cells[parent].speed + (.5 - Math.random()); //mutate +/-1
+  var vision = cells[parent].vision + (2 - Math.floor((Math.random()*5))); //+/-2
+  var energy = cells[parent].energy;
+  var maxSize = cells[parent].maxSize + (50 - Math.floor((Math.random()*100)));
+  cells.push(new cell(x,y,color,direction,speed,vision,energy,maxSize));
 }
