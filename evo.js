@@ -259,10 +259,11 @@ function report(){
   avgVision /= cells.length;
   avgMaxSize /= cells.length * 1000;
   
-  var experimentReport = "Number of cells: " + cells.length + 
-                         "<br/> Average Speed: " + avgSpeed.toFixed(3) +
-                         "<br/> Average Vision: " + avgVision.toFixed(3) +
-                         "<br/> Average Maximum Size: " + avgMaxSize.toFixed(3);
+  var experimentReport = "<table>"+
+    "<tr><td>Number of cells:</td><td>" + cells.length + "</td></tr>" +
+    "<tr><td>Average Speed:</td><td>" + avgSpeed.toFixed(3) + "</td></tr>" +
+    "<tr><td>Average Vision:</td><td>" + avgVision.toFixed(3) + "</td></tr>" +
+    "<tr><td>Average Max Size:</td><td>" + avgMaxSize.toFixed(3)+"</td></tr></table>";
                
   document.getElementById("report").innerHTML= experimentReport;
 }
@@ -271,4 +272,26 @@ function checkDNA(i){
   if(cells[i].speed < 0 || cells[i].vision < 0 || cells[i].maxSize < 0){
     cells.splice(i,1);
   } 
+}
+
+function cellInfo(event){
+  var x=event.clientX -9;  //TODO make X and Y offsets work in all cases
+  var y=event.clientY -16; //...
+  var selected = 0;
+  
+  for(var i=0; i<cells.length;i++){
+    if((x < cells[i].x+10)&&(x > cells[i].x-10)&&(y < cells[i].y+10)&&(y > cells[i].y-10)){
+      selected = cells[i];
+    }
+  }
+  if(selected!=0){
+    cellReport = "<table>" +
+      "<tr><td>Color:</td><td id='colorTab'> </td></tr>" +
+      "<tr><td>Speed:</td><td>" + selected.speed.toFixed(3) + "</td></tr>" +
+      "<tr><td>Vision:</td><td>" + selected.vision + "</td></tr>" +
+      "<tr><td>Max Size:</td><td>"+(selected.maxSize/1000).toFixed(3)+"</td></tr></table>";
+      
+    document.getElementById("cellInfo").innerHTML= cellReport;
+    document.getElementById("colorTab").style.backgroundColor= selected.color;
+  }
 }
