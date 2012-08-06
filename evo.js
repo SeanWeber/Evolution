@@ -17,7 +17,6 @@ var width = 500;
 var height = 600;
 var cells = [];
 var food = [];
-var colors = ['red','green','blue','yellow'];
 
 function cell(x,y,color,direction,speed,vision,energy,maxSize){
   this.x = x;
@@ -43,20 +42,22 @@ function init(){
   game.fillStyle = '#000';
   game.fillRect(0, 0, width, 600);
 
+  var pColor = 1;
   //populates the first generation of cells  
   for(i=0;i<50;i++){
     var x = Math.floor(Math.random() * width);
     var y = Math.floor(Math.random() * height);
-    var color = colors[Math.floor((Math.random()*colors.length))];
+    var color = 'hsl('+pColor+', 90%, 50%)';
     var direction = Math.floor((Math.random()*8));
     var speed = Math.random() * 2;
     var vision = Math.floor((Math.random()*5)) + 10; //10 to 15
     var energy = Math.floor((Math.random()*1000)) + 3500; //3500 to 4500
     var maxSize = Math.floor((Math.random()*1000)) + 4500; //4500 to 5500
 
+    pColor +=7;
     cells.push(new cell(x,y,color,direction,speed,vision,energy,maxSize));  
   }
-  
+  report();
   live(); //main loop
 }
 
@@ -115,7 +116,7 @@ function move(){
       for(j=0; j<food.length; j++){
         var xDiff = cells[i].x - food[j].x; 
         var yDiff = cells[i].y - food[j].y;
-        var catchRange = (cells[i].energy/1000) + 2;
+        var catchRange = (cells[i].energy/1000) + cells[i].speed;
 
         //If a cell is on top of a piece of food, the cell eats it
         if(Math.abs(xDiff) <= catchRange && Math.abs(yDiff) <= catchRange){
@@ -160,6 +161,7 @@ function move(){
     if(cells[i].energy < 1){
       food.push(new foodParticle(cells[i].x, cells[i].y));
       cells.splice(i,1);
+      report();
     }
   }
 }
@@ -238,4 +240,35 @@ function mitosis(parent){
   var energy = cells[parent].energy;
   var maxSize = cells[parent].maxSize + (50 - Math.floor((Math.random()*100)));
   cells.push(new cell(x,y,color,direction,speed,vision,energy,maxSize));
+  checkDNA(i);
+  report();
+}
+
+function report(){
+  var avgSpeed = 0;
+  var avgVision = 0;
+  var avgMaxSize = 0;
+  
+  for(var i=0; i<cells.length;i++){
+    avgSpeed += cells[i].speed;
+    avgVision += cells[i].vision;
+    avgMaxSize += cells[i].maxSize;
+  }
+  
+  avgSpeed /= cells.length;
+  avgVision /= cells.length;
+  avgMaxSize /= cells.length * 1000;
+  
+  var experimentReport = "Number of cells: " + cells.length + 
+                         "<br/> Average Speed: " + avgSpeed.toFixed(3) +
+                         "<br/> Average Vision: " + avgVision.toFixed(3) +
+                         "<br/> Average Maximum Size: " + avgMaxSize.toFixed(3);
+               
+  document.getElementById("report").innerHTML= experimentReport;
+}
+
+function checkDNA(i){
+  if(cells[i].speed < 0 || cells[i].vision < 0 || cells[i].maxSize < 0){
+    cells.splice(i,1);
+  } 
 }

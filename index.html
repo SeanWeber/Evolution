@@ -3,10 +3,15 @@
 <head>
   <title>Evolution</title>
   <script src="evo.js"></script>
+  <style type="text/css">
+    #game {float:left; padding-right:1em;}
+  </style>
 </head>
-<body>
+<body onload="init()">
   <canvas id="game"></canvas>
-  <script>init();</script>
+  <div id="status">
+    <p id="report"></p>
+  </div>
 </body>
 </html>
 
