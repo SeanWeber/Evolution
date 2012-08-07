@@ -10,8 +10,46 @@
 <body onload="init()">
   <canvas id="game" onclick="cellInfo(event)"></canvas>
   <div id="status">
-    <p id="report"></p>
-    <p id="cellInfo"></p>
+    <p id="report">
+    <table>
+      <tr>
+        <td>Number of cells:</td> 
+        <td id="amount"></td></tr>
+      <tr>
+        <td>Average Speed:</td> 
+        <td id="avgSpeed"></td>
+      </tr>
+      <tr>
+        <td>Average Vision:</td>
+        <td id="avgVision"></td>
+      </tr>
+      <tr>
+        <td>Average Max Size:</td> 
+        <td id="avgMaxSize"></td>
+      </tr>
+    </table>
+    
+    </p>
+    <p id="cellInfo">
+      <table>
+      <tr>
+        <td>Color:</td> 
+        <td id='colorTab'></td>
+      </tr>
+      <tr>
+        <td>Speed:</td> 
+        <td id='speed'></td>
+      </tr>
+      <tr>
+        <td>Vision:</td> 
+        <td id='vision'></td>
+      </tr>
+      <tr>
+        <td>Max Size:</td> 
+        <td id='maxSize'></td>
+      </tr>
+    </table>     
+    </p>
   </div>
 </body>
 </html>
