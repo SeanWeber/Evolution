@@ -10,7 +10,7 @@
 <body onload="init()">
   <canvas id="game" onclick="cellInfo(event)"></canvas>
   <div id="status">
-    <p id="report">
+    <h3>Experiment Data:</h3>
     <table>
       <tr>
         <td>Number of cells:</td> 
@@ -29,9 +29,8 @@
       </tr>
     </table>
     
-    </p>
-    <p id="cellInfo">
-      <table>
+    <h3>Cell Data:</h3>
+    <table>
       <tr>
         <td>Color:</td> 
         <td id='colorTab'></td>
@@ -49,7 +48,17 @@
         <td id='maxSize'></td>
       </tr>
     </table>     
-    </p>
+    
+    <h3>Change Parameters</h3>
+    
+    <form action="">
+     Starting cells: <input type="text" name="newStartingCells" id="newStartingCells" value="50" /><br />
+     Food generation rate: <input type="text" name="newFoodRate" id="newFoodRate"value="5" /><br />
+     Mutation rate: <input type="text" name="newMutationRate" id="newMutationRate" value="1" /><br />
+    </form>
+
+
+    <button onclick="reset()">Reset Experiment</button>
   </div>
 </body>
 </html>

@@ -22,6 +22,8 @@ experiment={
   startingCells: 50,
   foodRate: .05,
   mutationRate: 1,
+  speed: 50,
+  loop: 0,
 }
 
 function cell(x,y,color,direction,speed,vision,energy,maxSize){
@@ -68,10 +70,10 @@ function init(){
 }
 
 function live(){
-  feed(); //randomly adds food
-  move(); //determines the movement for each cell
-  draw(); //updates the canvas
-  var gLoop = setTimeout(live, 50); //repeat
+    feed(); //randomly adds food
+    move(); //determines the movement for each cell
+    draw(); //updates the canvas
+    experiment.loop = setTimeout(live, experiment.speed); //repeat
 }
 
 function feed(){ 
@@ -83,8 +85,7 @@ function feed(){
 }
 
 function draw(){
-  var c = document.getElementById('game');
-  var game = c.getContext('2d');
+  var game = document.getElementById('game').getContext('2d');
 
   //clears the previous frame
   game.fillStyle = '#000';
@@ -296,4 +297,26 @@ function cellInfo(event){
     document.getElementById("vision").innerHTML = selected.vision;
     document.getElementById("maxSize").innerHTML = (selected.maxSize/1000).toFixed(3);
   }
+}
+
+function reset(){
+  clearInterval(experiment.loop); //Stops the previous live() loop
+  cells = [];
+  food = [];
+  
+  var newStart = parseFloat(document.getElementById("newStartingCells").value);
+  var newFood = parseFloat(document.getElementById("newFoodRate").value);
+  var newMut = parseFloat(document.getElementById("newMutationRate").value);
+  
+  if(newStart > 1 && newStart <= 1000){
+    experiment.startingCells = Math.floor(newStart);
+  }
+  if(newFood > 0 && newFood < 100){
+    experiment.foodRate = newFood/100;
+  }
+  if(newMut >= 0 && newMut < 10){
+    experiment.mutationRate = newMut;
+  }
+  
+  init();
 }
