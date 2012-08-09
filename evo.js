@@ -279,8 +279,8 @@ function checkDNA(i){
 }
 
 function cellInfo(event){
-  var x=event.clientX -9;  //TODO make X and Y offsets work in all cases
-  var y=event.clientY -16; //...
+  var x=event.clientX - game.offsetLeft;
+  var y=event.clientY - game.offsetTop;
   var selected = 0;
   
   //checks if the mouse clicked near a cell
@@ -299,29 +299,24 @@ function cellInfo(event){
   }
 }
 
-function reset(){
-  clearInterval(experiment.loop); //Stops the previous live() loop
-  cells = [];
-  food = [];
-  
+function reset(){ 
   var newStart = parseFloat(document.getElementById("newStartingCells").value);
   var newFood = parseFloat(document.getElementById("newFoodRate").value);
   var newMut = parseFloat(document.getElementById("newMutationRate").value);
   
-  if(newStart >= 1 && newStart <= 1000)
-    experiment.startingCells = Math.floor(newStart);
-  else
+  if(!(newStart >= 1 && newStart <= 1000))
     alert("Number of starting cells must be between 1 and 1000");
-
-  if(newFood >= 0 && newFood <= 100)
-    experiment.foodRate = newFood/100;
-  else
+  else if(!(newFood >= 0 && newFood <= 100))
     alert("Food generation rate must be between 0 and 100");
-
-  if(newMut >= 0 && newMut <= 10)
-    experiment.mutationRate = newMut;
-  else
+  else if(!(newMut >= 0 && newMut <= 10))
     alert("Mutation rate must be between 0 and 10");  
-  
-  init();
+  else{  
+    clearInterval(experiment.loop); //Stops the previous live() loop
+    cells = [];
+    food = [];
+    experiment.startingCells = Math.floor(newStart);
+    experiment.foodRate = newFood/100;
+    experiment.mutationRate = newMut;
+    init();
+  }
 }
