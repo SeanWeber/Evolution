@@ -58,9 +58,9 @@ function init(){
     var color = 'hsl('+pColor+', 90%, 50%)';
     var direction = Math.floor((Math.random()*8));
     var speed = Math.random() * 2;
-    var vision = Math.floor((Math.random()*5)) + 10; //10 to 15
-    var energy = Math.floor((Math.random()*1000)) + 3500; //3500 to 4500
-    var maxSize = Math.floor((Math.random()*1000)) + 4500; //4500 to 5500
+    var vision = Math.floor((Math.random()*6)) + 10; //10 to 15
+    var energy = Math.floor((Math.random()*1000)) + 3500; //3500 to 4499
+    var maxSize = Math.floor((Math.random()*1000)) + 4500; //4500 to 5499
 
     pColor += (360 / experiment.startingCells);
     cells.push(new cell(x,y,color,direction,speed,vision,energy,maxSize));  
@@ -308,15 +308,20 @@ function reset(){
   var newFood = parseFloat(document.getElementById("newFoodRate").value);
   var newMut = parseFloat(document.getElementById("newMutationRate").value);
   
-  if(newStart > 1 && newStart <= 1000){
+  if(newStart >= 1 && newStart <= 1000)
     experiment.startingCells = Math.floor(newStart);
-  }
-  if(newFood > 0 && newFood < 100){
+  else
+    alert("Number of starting cells must be between 1 and 1000");
+
+  if(newFood >= 0 && newFood <= 100)
     experiment.foodRate = newFood/100;
-  }
-  if(newMut >= 0 && newMut < 10){
+  else
+    alert("Food generation rate must be between 0 and 100");
+
+  if(newMut >= 0 && newMut <= 10)
     experiment.mutationRate = newMut;
-  }
+  else
+    alert("Mutation rate must be between 0 and 10");  
   
   init();
 }
