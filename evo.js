@@ -247,7 +247,7 @@ function mitosis(parent){
   var vision=cells[parent].vision+(2-Math.floor((Math.random()*5)))*experiment.mutationRate;
   var maxSize=cells[parent].maxSize+(50-Math.floor((Math.random()*100)))*experiment.mutationRate;
   cells.push(new cell(x,y,color,direction,speed,vision,energy,maxSize));
-  checkDNA(i);
+  checkDNA(cells.length - 1);
   report();
 }
 
