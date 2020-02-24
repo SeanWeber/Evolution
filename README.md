@@ -8,4 +8,4 @@ Cellular life simulator in HTML5
 As the experiment runs, data about the cell population is displayed. In addition, clicking a cell gives information about the individual cell. 
 
 See a demo of it at:
-http://seanweber.nfshost.com/evolution/
+https://sean-evolution.s3.eu-north-1.amazonaws.com/index.html
